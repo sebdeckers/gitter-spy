@@ -4,9 +4,10 @@
   "description": ":link: Gitter bot to harvest links from chat rooms",
   "main": "server.js",
   "scripts": {
-    "start": "babel",
+    "start": "babel-node .",
     "pretest": "standard",
-    "test": "mocha"
+    "test": "babel-node node_modules/.bin/isparta cover node_modules/.bin/_mocha",
+    "codecov": "cat coverage/coverage.json | codecov"
   },
   "author": "Sebastiaan Deckers <seb@ninja.sg>",
   "license": "ISC",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "babel-register": "^6.3.13",
     "chai": "^3.4.1",
+    "isparta": "^4.0.0",
     "mocha": "^2.3.4",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0"
