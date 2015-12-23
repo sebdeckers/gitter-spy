@@ -1,2 +1,2 @@
-console.log('Hello World!')
-export default undefined
+import app from './backend'
+app.listen(3000)
