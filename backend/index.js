@@ -34,7 +34,9 @@ async function getChats (user) {
 async function getRooms () {
   const database = await db()
   const collection = await database.collection('rooms')
-  return await collection.find().toArray()
+  const rooms = await collection.find().toArray()
+  console.log('Got rooms')
+  return rooms
 }
 
 app.get('/rooms', async function (req, res) {
