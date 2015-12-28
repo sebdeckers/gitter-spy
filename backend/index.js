@@ -3,7 +3,7 @@ import express from 'express'
 import db from './db'
 const app = express()
 
-app.use(express.static(path.join(__dirname, '..', 'frontend')))
+app.use(express.static(path.join(__dirname, '..', 'dist')))
 
 async function getMessages (user, room) {
   const messages = await fetch(`https://api.gitter.im/v1/rooms/${ room.id }/chatMessages`)
@@ -11,7 +11,7 @@ async function getMessages (user, room) {
 }
 
 app.get('/update', async function (req, res) {
-  for (const room of await getRooms()) {
+  for (const room of await findRooms()) {
     const messages = await getMessages(req.user, room)
     const urls = [].concat(...(messages
       .filter(message => message.urls && message.urls.length > 0)
@@ -33,20 +33,30 @@ async function getChats (user) {
 
 async function getRooms () {
   const database = await db()
-  const collection = await database.collection('rooms')
-  const rooms = await collection.find().toArray()
-  console.log('Got rooms')
-  return rooms
+  return await database.collection('rooms')
+}
+
+async function findRooms() {
+  const room = getRooms()
+  return await rooms.find().toArray()
 }
 
 app.get('/rooms', async function (req, res) {
   const [chats, spies] = await* [
     getChats(req.user),
-    getRooms()
+    findRooms()
   ]
   res.json(
     rooms.filter(room => chats.some(chat => chat.id === room.id))
   )
+})
+
+app.post('/rooms', async function (req, res) {
+  const rooms = await getRooms()
+  const record = await rooms.insert({
+    foo: 'bar'
+  })
+  res.json({ status: 'ok' })
 })
 
 export default app
